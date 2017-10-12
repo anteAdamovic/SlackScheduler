@@ -1,9 +1,14 @@
 import * as React from 'react';
 
-class Modal extends React.Component<{}, {}> {
+interface ModalProps {
+    show: boolean
+}
+
+class Modal extends React.Component<ModalProps, {}> {
     
     render(): JSX.Element {
-        if (!this.props) {
+
+        if (!this.props.show) {
             return null;
         }
 

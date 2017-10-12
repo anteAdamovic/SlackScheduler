@@ -14,24 +14,12 @@ class Table extends React.Component<TableProps, {}> {
         super(props);
     }
 
-    redAction() {
-        return {
-            type: 'from-table'
-        }
-    }
-
-    testRedux() {
-        console.log(this);
-        console.log('click');
-        this.props.store.dispatch(getJobs());
-    }
-
     render(): JSX.Element {
 
         if (this.props.jobs.length != 0) {
             return (
-                <div onClick={this.testRedux.bind(this)}>
-                    I am table !
+                <div>
+                    Scheduled Jobs
                     <table>
                         {
                             this.props.jobs.map(job =>
@@ -49,8 +37,8 @@ class Table extends React.Component<TableProps, {}> {
             );
         } else {
             return (
-                <div onClick={this.testRedux.bind(this)}>
-                    I am table !
+                <div>
+                    Scheduled Jobs
                     <table>
                         {
                             <tr> No scheduled jobs. </tr>

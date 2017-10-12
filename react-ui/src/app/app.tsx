@@ -11,36 +11,18 @@ import { fetchJobs } from './reducers/fetchJobs';
 
 interface AppState {
     jobs: any[],
-    store: Store<any>
+    store: Store<any>,
+    showModal: boolean
 };
 
 class App extends React.Component<{}, AppState> {
     initialState: any = {
         jobs: [],
-        store: createStore(this.rootReducer.bind(this), null)
-    }
-
-    red(state: any = {}, action: any) {
-        console.log('this is from app');
-        console.log(state);
-        console.log(action);
-        console.log('trying the fetch');
-        console.log(fetch);
-
-        return state;
-    }
-
-    act(e: any) {
-        return {
-            type: 'act',
-            e
-        }
+        store: createStore(this.rootReducer.bind(this), null),
+        showModal: false
     }
 
     rootReducer(state: any, action: any) {
-        console.log('rootReducer');
-        console.log('state:', state);
-        console.log('action:', action);
         if (!state) {
             return {
                 jobs: []
@@ -56,14 +38,11 @@ class App extends React.Component<{}, AppState> {
                 .then((response: Response) => response.json())
                 .then(
                 (response: any) => {
-                    console.log('response:');
-                    console.log(response);
                     if (response.status)
                         this.state.store.dispatch(updateJobs(response.jobs));
                 },
                 (error: any) => {
-                    console.log('error:');
-                    console.log(error);
+                    console.error(error);
                 }
                 );
             return state;
@@ -73,11 +52,13 @@ class App extends React.Component<{}, AppState> {
                     jobs: action.jobs
                 };
             } else {
-                let newJobs: any[] = ['1', '2', '3'];
-                newJobs.forEach(job => state.jobs.push(job))
                 return {
                     jobs: state.jobs
                 }
+            }
+        } else if (action.type == 'TOGGLE_MODAL') {
+            return {
+                toggleModal: true
             }
         }
     }
@@ -88,31 +69,26 @@ class App extends React.Component<{}, AppState> {
         this.state = this.initialState;
         this.state.store.subscribe(
             () => {
-                console.log('subscription');
-                console.log(this);
-                console.log(this.state.store);
-                console.log(this.state.store.getState());
-                this.setState({ jobs: this.state.store.getState().jobs, store: this.state.store });
+                var storeState = this.state.store.getState();
+                console.log('subscription: ', storeState);
+
+                if (storeState.jobs != undefined) {
+                    this.setState({ jobs: storeState.jobs, store: this.state.store, showModal: this.state.showModal });
+                }
+                if (storeState.toggleModal) {
+                    this.setState({ jobs: this.state.jobs, store: this.state.store, showModal: !this.state.showModal });
+                }
             }
         )
 
-        setTimeout(
-            () => {
-                // this.setState({ jobs: this.state.store.dispatch(getJobs()), store: this.state.store });
-                setTimeout(() => console.log(this.state), 1000);
-            }, 1000
-        );
-    }
-
-    componentWillMount() {
-        this.setState(this.state.store.getState());
+        this.state.store.dispatch(getJobs());
     }
 
     render(): JSX.Element {
         return (
             <div className='app'>
-                <Modal />
-                <Buttons />
+                <Modal show={this.state.showModal} />
+                <Buttons store={this.state.store} />
                 <Table jobs={this.state.jobs} store={this.state.store} />
             </div>
         );

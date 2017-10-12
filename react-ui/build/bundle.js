@@ -1400,6 +1400,7 @@ function compose() {
 Object.defineProperty(exports, "__esModule", { value: true });
 var GET_JOBS_TYPE = 'GET_JOBS';
 var UPDATE_JOBS_TYPE = 'UPDATE_JOBS';
+var TOGGLE_MODAL_TYPE = 'TOGGLE_MODAL';
 exports.getJobs = function () {
     return {
         type: GET_JOBS_TYPE
@@ -1409,6 +1410,11 @@ exports.updateJobs = function (jobs) {
     return {
         type: UPDATE_JOBS_TYPE,
         jobs: jobs
+    };
+};
+exports.toggleModal = function () {
+    return {
+        type: TOGGLE_MODAL_TYPE
     };
 };
 
@@ -21663,41 +21669,25 @@ var App = (function (_super) {
         var _this = _super.call(this) || this;
         _this.initialState = {
             jobs: [],
-            store: redux_1.createStore(_this.rootReducer.bind(_this), null)
+            store: redux_1.createStore(_this.rootReducer.bind(_this), null),
+            showModal: false
         };
         _this.state = _this.initialState;
         _this.state.store.subscribe(function () {
-            console.log('subscription');
-            console.log(_this);
-            console.log(_this.state.store);
-            console.log(_this.state.store.getState());
-            _this.setState({ jobs: _this.state.store.getState().jobs, store: _this.state.store });
+            var storeState = _this.state.store.getState();
+            console.log('subscription: ', storeState);
+            if (storeState.jobs != undefined) {
+                _this.setState({ jobs: storeState.jobs, store: _this.state.store, showModal: _this.state.showModal });
+            }
+            if (storeState.toggleModal) {
+                _this.setState({ jobs: _this.state.jobs, store: _this.state.store, showModal: !_this.state.showModal });
+            }
         });
-        setTimeout(function () {
-            setTimeout(function () { return console.log(_this.state); }, 1000);
-        }, 1000);
+        _this.state.store.dispatch(jobs_1.getJobs());
         return _this;
     }
-    App.prototype.red = function (state, action) {
-        if (state === void 0) { state = {}; }
-        console.log('this is from app');
-        console.log(state);
-        console.log(action);
-        console.log('trying the fetch');
-        console.log(fetch);
-        return state;
-    };
-    App.prototype.act = function (e) {
-        return {
-            type: 'act',
-            e: e
-        };
-    };
     App.prototype.rootReducer = function (state, action) {
         var _this = this;
-        console.log('rootReducer');
-        console.log('state:', state);
-        console.log('action:', action);
         if (!state) {
             return {
                 jobs: []
@@ -21711,13 +21701,10 @@ var App = (function (_super) {
             fetch("http://localhost:8080/jobs", { method: 'GET', headers: headers })
                 .then(function (response) { return response.json(); })
                 .then(function (response) {
-                console.log('response:');
-                console.log(response);
                 if (response.status)
                     _this.state.store.dispatch(jobs_1.updateJobs(response.jobs));
             }, function (error) {
-                console.log('error:');
-                console.log(error);
+                console.error(error);
             });
             return state;
         }
@@ -21728,21 +21715,21 @@ var App = (function (_super) {
                 };
             }
             else {
-                var newJobs = ['1', '2', '3'];
-                newJobs.forEach(function (job) { return state.jobs.push(job); });
                 return {
                     jobs: state.jobs
                 };
             }
         }
-    };
-    App.prototype.componentWillMount = function () {
-        this.setState(this.state.store.getState());
+        else if (action.type == 'TOGGLE_MODAL') {
+            return {
+                toggleModal: true
+            };
+        }
     };
     App.prototype.render = function () {
         return (React.createElement("div", { className: 'app' },
-            React.createElement(modal_1.default, null),
-            React.createElement(buttons_1.default, null),
+            React.createElement(modal_1.default, { show: this.state.showModal }),
+            React.createElement(buttons_1.default, { store: this.state.store }),
             React.createElement(table_1.default, { jobs: this.state.jobs, store: this.state.store })));
     };
     return App;
@@ -22863,7 +22850,7 @@ var Modal = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     Modal.prototype.render = function () {
-        if (!this.props) {
+        if (!this.props.show) {
             return null;
         }
         return React.createElement("div", null, " I am modal! ");
@@ -22891,13 +22878,22 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(2);
+var jobs_1 = __webpack_require__(21);
 var Buttons = (function (_super) {
     __extends(Buttons, _super);
     function Buttons() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    Buttons.prototype.toggleModal = function () {
+        this.props.store.dispatch(jobs_1.toggleModal());
+    };
+    Buttons.prototype.updateJobs = function () {
+        this.props.store.dispatch(jobs_1.getJobs());
+    };
     Buttons.prototype.render = function () {
-        return React.createElement("div", null, " We are buttons ! ");
+        return (React.createElement("div", { className: 'buttons' },
+            React.createElement("button", { className: 'newJobButton', onClick: this.toggleModal.bind(this) }, " New Job "),
+            React.createElement("button", { className: 'updateJobsButton', onClick: this.updateJobs.bind(this) }, " Update Jobs ")));
     };
     return Buttons;
 }(React.Component));
@@ -22922,26 +22918,15 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(2);
-var jobs_1 = __webpack_require__(21);
 var Table = (function (_super) {
     __extends(Table, _super);
     function Table(props) {
         return _super.call(this, props) || this;
     }
-    Table.prototype.redAction = function () {
-        return {
-            type: 'from-table'
-        };
-    };
-    Table.prototype.testRedux = function () {
-        console.log(this);
-        console.log('click');
-        this.props.store.dispatch(jobs_1.getJobs());
-    };
     Table.prototype.render = function () {
         if (this.props.jobs.length != 0) {
-            return (React.createElement("div", { onClick: this.testRedux.bind(this) },
-                "I am table !",
+            return (React.createElement("div", null,
+                "Scheduled Jobs",
                 React.createElement("table", null, this.props.jobs.map(function (job) {
                     return React.createElement("tr", null,
                         React.createElement("td", null,
@@ -22967,8 +22952,8 @@ var Table = (function (_super) {
                 }))));
         }
         else {
-            return (React.createElement("div", { onClick: this.testRedux.bind(this) },
-                "I am table !",
+            return (React.createElement("div", null,
+                "Scheduled Jobs",
                 React.createElement("table", null, React.createElement("tr", null, " No scheduled jobs. "))));
         }
     };
