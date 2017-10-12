@@ -6,7 +6,7 @@ import Modal from './components/modal';
 import Buttons from './components/buttons';
 import Table from './components/table';
 
-import { getJobs } from './actions/getJobs';
+import { getJobs, updateJobs } from './actions/jobs';
 import { fetchJobs } from './reducers/fetchJobs';
 
 interface AppState {
@@ -25,14 +25,8 @@ class App extends React.Component<{}, AppState> {
         console.log(state);
         console.log(action);
         console.log('trying the fetch');
-        fetch("https://raw.githubusercontent.com/CodeMileu/mileum/master/README.md", { method: 'POST', body: { 123: '123' } }).then(
-            (response: any) => {
-                console.log('response:');
-                console.log(response);
-            }
-        );
         console.log(fetch);
-        
+
         return state;
     }
 
@@ -45,16 +39,46 @@ class App extends React.Component<{}, AppState> {
 
     rootReducer(state: any, action: any) {
         console.log('rootReducer');
+        console.log('state:', state);
+        console.log('action:', action);
         if (!state) {
             return {
-                jobs: ['1']
+                jobs: []
             };
         }
 
-        let newJobs: any[] = ['1', '2', '3'];
-        newJobs.forEach(job => state.jobs.push(job))
-        return {
-            jobs: state.jobs
+        if (action.type == 'GET_JOBS') {
+            let headers = new Headers({
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'multipart/form-data'
+            });
+            fetch("http://localhost:8080/jobs", { method: 'GET', headers: headers })
+                .then((response: Response) => response.json())
+                .then(
+                (response: any) => {
+                    console.log('response:');
+                    console.log(response);
+                    if (response.status)
+                        this.state.store.dispatch(updateJobs(response.jobs));
+                },
+                (error: any) => {
+                    console.log('error:');
+                    console.log(error);
+                }
+                );
+            return state;
+        } else if (action.type == 'UPDATE_JOBS') {
+            if (action.jobs) {
+                return {
+                    jobs: action.jobs
+                };
+            } else {
+                let newJobs: any[] = ['1', '2', '3'];
+                newJobs.forEach(job => state.jobs.push(job))
+                return {
+                    jobs: state.jobs
+                }
+            }
         }
     }
 
@@ -89,7 +113,7 @@ class App extends React.Component<{}, AppState> {
             <div className='app'>
                 <Modal />
                 <Buttons />
-                <Table jobs={this.state.jobs} store={this.state.store}/>
+                <Table jobs={this.state.jobs} store={this.state.store} />
             </div>
         );
     }
