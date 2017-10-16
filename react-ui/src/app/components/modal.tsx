@@ -12,6 +12,8 @@ interface ModalState {
     channel: string,
     channels: any[],
     timestamp: string,
+    hour: string,
+    minute: string,
     message: string
 }
 
@@ -31,9 +33,13 @@ class Modal extends React.Component<ModalProps, ModalState> {
     constructor(props: ModalProps) {
         super(props);
 
+        let curDate: Date = new Date();
+
         this.state = {
             channel: '',
-            timestamp: '',
+            timestamp: curDate.getHours() + ':' + curDate.getMinutes(),
+            hour: curDate.getHours().toString(),
+            minute: curDate.getMinutes().toString(),
             message: '',
             channels: [
                 {
@@ -46,6 +52,38 @@ class Modal extends React.Component<ModalProps, ModalState> {
                 }
             ]
         };
+    }
+
+    public getHoursArray(): string[] {
+        let hours: string[] = [];
+
+        for(var i = 0; i < 24; i++) {
+            hours.push(i.toString());
+        }
+
+        return hours;
+    }
+
+    public minuteChange(event: any): void {
+        let minute: string = event.target.value;
+        let timestamp = this.state.timestamp.split(':')[0] + ':' + minute;
+        this.setState({ minute: minute, timestamp: timestamp });
+    }
+
+    public hourChange(event: any): void {
+        let hour: string = event.target.value;
+        let timestamp = hour + ':' + this.state.timestamp.split(':')[1];
+        this.setState({ hour: hour, timestamp: timestamp });
+    }
+
+    public getMinutesArray(): string[] {
+        let minutes: string[] = [];
+
+        for(var i = 0; i < 60; i++) {
+            minutes.push(i.toString());
+        }
+
+        return minutes;
     }
 
     public closeModal(): void {
@@ -85,10 +123,10 @@ class Modal extends React.Component<ModalProps, ModalState> {
                     <form className='form' onSubmit={this.createNewJob.bind(this)}>
                         <div className='form-item-wrapper'>
                             <label className='form-item'> Channel:
-                            <select className="form-control" id="searchType" onChange={e => this.channelChange(e)} value={this.state.channel}>
+                            <select className="form-control" id="searchType" onChange={this.channelChange.bind(this)} value={this.state.channel}>
                                     { this.state.channels.map(
                                         (channel: any, index: any) => {
-                                            return <option key={index} value={channel.name}> { channel.name } </option>;
+                                            return <option key={index} value={channel.name} selected={index == 0}> #{ channel.name } </option>;
                                         }
                                     ) }
                                 </select>
@@ -96,7 +134,21 @@ class Modal extends React.Component<ModalProps, ModalState> {
                         </div>
                         <div className='form-item-wrapper'>
                             <label className='form-item'> Timestamp:
-                        <input className='form-input' type='text' value={this.state.timestamp} onChange={this.timestampChange.bind(this)} name='timestamp' />
+                        <input className='form-input' type='text' value={this.state.timestamp} disabled={true} name='timestamp' />
+                        <select value={this.state.hour} onChange={this.hourChange.bind(this)}>
+                            { this.getHoursArray().map(
+                                (hour: string, index: number) => {
+                                    return <option key={index} value={hour}>{hour}</option>;
+                                }
+                            ) }
+                        </select>
+                        <select value={this.state.minute} onChange={this.minuteChange.bind(this)}>
+                        { this.getMinutesArray().map(
+                                (minute: string, index: number) => {
+                                    return <option key={index} value={minute}>{minute}</option>;
+                                }
+                            ) }
+                        </select>
                             </label>
                         </div>
                         <div className='form-item-wrapper'>

@@ -22917,9 +22917,12 @@ var Modal = (function (_super) {
     __extends(Modal, _super);
     function Modal(props) {
         var _this = _super.call(this, props) || this;
+        var curDate = new Date();
         _this.state = {
             channel: '',
-            timestamp: '',
+            timestamp: curDate.getHours() + ':' + curDate.getMinutes(),
+            hour: curDate.getHours().toString(),
+            minute: curDate.getMinutes().toString(),
             message: '',
             channels: [
                 {
@@ -22934,6 +22937,30 @@ var Modal = (function (_super) {
         };
         return _this;
     }
+    Modal.prototype.getHoursArray = function () {
+        var hours = [];
+        for (var i = 0; i < 24; i++) {
+            hours.push(i.toString());
+        }
+        return hours;
+    };
+    Modal.prototype.minuteChange = function (event) {
+        var minute = event.target.value;
+        var timestamp = this.state.timestamp.split(':')[0] + ':' + minute;
+        this.setState({ minute: minute, timestamp: timestamp });
+    };
+    Modal.prototype.hourChange = function (event) {
+        var hour = event.target.value;
+        var timestamp = hour + ':' + this.state.timestamp.split(':')[1];
+        this.setState({ hour: hour, timestamp: timestamp });
+    };
+    Modal.prototype.getMinutesArray = function () {
+        var minutes = [];
+        for (var i = 0; i < 60; i++) {
+            minutes.push(i.toString());
+        }
+        return minutes;
+    };
     Modal.prototype.closeModal = function () {
         this.props.store.dispatch(jobs_1.toggleModal());
     };
@@ -22952,7 +22979,6 @@ var Modal = (function (_super) {
         this.setState({ message: event.target.value });
     };
     Modal.prototype.render = function () {
-        var _this = this;
         if (!this.props.show) {
             return null;
         }
@@ -22964,16 +22990,22 @@ var Modal = (function (_super) {
                     React.createElement("div", { className: 'form-item-wrapper' },
                         React.createElement("label", { className: 'form-item' },
                             " Channel:",
-                            React.createElement("select", { className: "form-control", id: "searchType", onChange: function (e) { return _this.channelChange(e); }, value: this.state.channel }, this.state.channels.map(function (channel, index) {
-                                return React.createElement("option", { key: index, value: channel.name },
-                                    " ",
+                            React.createElement("select", { className: "form-control", id: "searchType", onChange: this.channelChange.bind(this), value: this.state.channel }, this.state.channels.map(function (channel, index) {
+                                return React.createElement("option", { key: index, value: channel.name, selected: index == 0 },
+                                    " #",
                                     channel.name,
                                     " ");
                             })))),
                     React.createElement("div", { className: 'form-item-wrapper' },
                         React.createElement("label", { className: 'form-item' },
                             " Timestamp:",
-                            React.createElement("input", { className: 'form-input', type: 'text', value: this.state.timestamp, onChange: this.timestampChange.bind(this), name: 'timestamp' }))),
+                            React.createElement("input", { className: 'form-input', type: 'text', value: this.state.timestamp, disabled: true, name: 'timestamp' }),
+                            React.createElement("select", { value: this.state.hour, onChange: this.hourChange.bind(this) }, this.getHoursArray().map(function (hour, index) {
+                                return React.createElement("option", { key: index, value: hour }, hour);
+                            })),
+                            React.createElement("select", { value: this.state.minute, onChange: this.minuteChange.bind(this) }, this.getMinutesArray().map(function (minute, index) {
+                                return React.createElement("option", { key: index, value: minute }, minute);
+                            })))),
                     React.createElement("div", { className: 'form-item-wrapper' },
                         React.createElement("label", { className: 'form-item' },
                             " Message:",
