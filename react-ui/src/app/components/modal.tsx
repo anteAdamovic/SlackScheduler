@@ -76,7 +76,7 @@ class Modal extends React.Component<ModalProps, ModalState> {
             return null;
         }
 
-        this.setState({ channels: [{ name: 'general', id: 1 }]});
+        console.log(this.state);
 
         return (
             <div className='modal-wrapper'>
@@ -85,13 +85,12 @@ class Modal extends React.Component<ModalProps, ModalState> {
                     <form className='form' onSubmit={this.createNewJob.bind(this)}>
                         <div className='form-item-wrapper'>
                             <label className='form-item'> Channel:
-                        <select value={this.state.channel} onChange={this.channelChange.bind(this)} name='channel'>
-                                    <option value={0} selected> </option>
-                                    {this.state.channels.forEach(
-                                        (channel: any) => {
-                                            <option value={channel.id}> {channel.name} </option>
+                            <select className="form-control" id="searchType" onChange={e => this.channelChange(e)} value={this.state.channel}>
+                                    { this.state.channels.map(
+                                        (channel: any, index: any) => {
+                                            return <option key={index} value={channel.name}> { channel.name } </option>;
                                         }
-                                    )}
+                                    ) }
                                 </select>
                             </label>
                         </div>

@@ -67,6 +67,31 @@ class App extends React.Component<{}, AppState> {
                 toggleModal: true
             }
         } else if (action.type == 'CREATE_JOB') {
+            let headers = new Headers({
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
+            });
+
+            let data = {
+                channel: action.job.channel,
+                message: action.job.message,
+                timestamp: action.job.timestamp,
+                status: 'PENDING'
+            };
+
+            fetch("http://localhost:8080/job", { method: 'POST', headers: headers, body: JSON.stringify(data) })
+                .then((response: Response) => { console.log('Raw response:', response); return response.json(); })
+                .then(
+                (response: any) => {
+                    console.log('Response:', response);
+                    
+                    if (response.status)
+                        this.state.store.dispatch(getJobs());
+                },
+                (error: any) => {
+                    console.error(error);
+                }
+                );
             return {
                 type: action.type,
                 job: action.job

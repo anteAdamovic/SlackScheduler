@@ -33,16 +33,16 @@ public class JobController {
 	private JobService jobService;
     
 	@CrossOrigin(origins = "null")
-    @RequestMapping(value = "/job", method = RequestMethod.GET)
+    @RequestMapping(value = "/job", method = RequestMethod.POST)
     public CreateJobResponse createJob(@RequestParam() CreateJobRequest request) {
     	return new CreateJobResponse(200, false, true, "No service found.");
     }
     
-	@CrossOrigin(origins = "null")
-    @RequestMapping(value = "/job", method = RequestMethod.DELETE)
-    public DeleteJobResponse deleteJob(@RequestParam() DeleteJobRequest request) {
-    	return new DeleteJobResponse(200, false);
-    }
+//	@CrossOrigin(origins = "null")
+//    @RequestMapping(value = "/job", method = RequestMethod.DELETE)
+//    public DeleteJobResponse deleteJob(@RequestParam() DeleteJobRequest request) {
+//    	return new DeleteJobResponse(200, false);
+//    }
    
 	@CrossOrigin(origins = "null")
     @RequestMapping("/jobs")
