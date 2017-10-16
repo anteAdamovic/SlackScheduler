@@ -24,6 +24,7 @@
   "dependencies": {
     "es6-promises": "^1.0.10",
     "isomorphic-fetch": "^2.2.1",
+    "rc-time-picker": "^2.4.1",
     "react": "16.0.0",
     "react-dom": "16.0.0",
     "react-redux": "^5.0.6",
