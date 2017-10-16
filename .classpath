@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="spring-service/src/main/java"/>
+	<classpathentry kind="src" path="spring-service/src/test/java"/>
+	<classpathentry exported="true" kind="lib" path="spring-service/.mvn/wrapper/maven-wrapper.jar"/>
+	<classpathentry exported="true" kind="lib" path="spring-service/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry exported="true" kind="lib" path="spring-service/sqlite-jdbc-3.20.0.jar"/>
+	<classpathentry kind="output" path="spring-service/build/classes/java/main"/>
+</classpath>
