@@ -2,12 +2,14 @@ import * as React from 'react';
 import { Store, createStore } from 'redux';
 import * as fetch from 'isomorphic-fetch';
 
-import Modal from './components/modal';
-import Buttons from './components/buttons';
-import Table from './components/table';
+import Modal from './components/Modal';
+import Buttons from './components/Buttons';
+import Table from './components/Table';
 
 import { getJobs, updateJobs } from './actions/jobs';
 import { fetchJobs } from './reducers/fetchJobs';
+
+import { ActionTypes } from './redux/ActionTypes';
 
 interface AppState {
     jobs: any[],
@@ -23,6 +25,10 @@ class App extends React.Component<{}, AppState> {
     }
 
     rootReducer(state: any, action: any) {
+        console.log('Root Reducer:');
+        console.log('State: ', state);
+        console.log('Action: ', action);
+
         if (!state) {
             return {
                 jobs: []
@@ -45,7 +51,7 @@ class App extends React.Component<{}, AppState> {
                     console.error(error);
                 }
                 );
-            return state;
+            return action;
         } else if (action.type == 'UPDATE_JOBS') {
             if (action.jobs) {
                 return {
@@ -60,6 +66,13 @@ class App extends React.Component<{}, AppState> {
             return {
                 toggleModal: true
             }
+        } else if (action.type == 'CREATE_JOB') {
+            return {
+                type: action.type,
+                job: action.job
+            }
+        } else {
+            return {}
         }
     }
 
@@ -73,10 +86,14 @@ class App extends React.Component<{}, AppState> {
                 console.log('subscription: ', storeState);
 
                 if (storeState.jobs != undefined) {
-                    this.setState({ jobs: storeState.jobs, store: this.state.store, showModal: this.state.showModal });
-                }
-                if (storeState.toggleModal) {
-                    this.setState({ jobs: this.state.jobs, store: this.state.store, showModal: !this.state.showModal });
+                    this.setState({ jobs: storeState.jobs });
+                } else if (storeState.toggleModal) {
+                    this.setState({ showModal: !this.state.showModal });
+                } else if (storeState.type == ActionTypes.CREATE_JOB) {
+                    let jobs = this.state.jobs;
+                    jobs.push(storeState.job);
+
+                    this.setState({ jobs: jobs })
                 }
             }
         )
@@ -87,7 +104,7 @@ class App extends React.Component<{}, AppState> {
     render(): JSX.Element {
         return (
             <div className='app'>
-                <Modal show={this.state.showModal} />
+                <Modal show={this.state.showModal} store={this.state.store} />
                 <Buttons store={this.state.store} />
                 <Table jobs={this.state.jobs} store={this.state.store} />
             </div>

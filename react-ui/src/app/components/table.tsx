@@ -16,39 +16,37 @@ class Table extends React.Component<TableProps, {}> {
 
     render(): JSX.Element {
 
-        if (this.props.jobs.length != 0) {
-            return (
-                <div>
-                    Scheduled Jobs
-                    <table>
-                        {
-                            this.props.jobs.map(job =>
-                                <tr>
-                                    <td> {job.id} </td>
-                                    <td> {job.message} </td>
-                                    <td> {job.channel} </td>
-                                    <td> {job.timestamp} </td>
-                                    <td> {job.status} </td>
-                                </tr>
-                            )
-                        }
-                    </table>
-                </div>
-            );
-        } else {
-            return (
-                <div>
-                    Scheduled Jobs
-                    <table>
-                        {
-                            <tr> No scheduled jobs. </tr>
-                        }
-                    </table>
-                </div>
-            );
-        }
-
+        return (
+            <div className='table-wrapper'>
+                <h3>Scheduled Jobs</h3>
+                <table className='table'>
+                    <thead>
+                        <tr>
+                            <th> ID </th>
+                            <th> Message </th>
+                            <th> Channel </th>
+                            <th> Timestamp </th>
+                            <th> Status </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        (this.props.jobs && this.props.jobs.length > 0) ? this.props.jobs.map(job =>
+                            <tr className='row'>
+                                <td className='cell'> {job.id} </td>
+                                <td className='cell'> {job.message} </td>
+                                <td className='cell'> {job.channel} </td>
+                                <td className='cell'> {job.timestamp} </td>
+                                <td className='cell'> {job.status} </td>
+                            </tr>
+                        ) : <tr><td colSpan={5}>No scheduled jobs. </td></tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        );
     }
+
 }
 
 export default Table;

@@ -1,0 +1,35 @@
+.modal-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.modal {
+    margin: 0 auto;
+    margin-top: 100px;
+    padding: 20px;
+    width: 350px;
+    background-color: burlywood;
+    border-radius: 5px;
+}
+
+.modal .form-item-wrapper {
+    margin: 10px;
+    width: 90%;
+}
+
+.modal .form-item {
+    display: inline-block;
+    text-align: left;
+    width: 70%;
+}
+
+.modal .form-input {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+}

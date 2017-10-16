@@ -18,10 +18,13 @@ class Buttons extends React.Component<ButtonsProps, {}> {
 
     render(): JSX.Element {
         return (
-            <div className='buttons'>
-                <button className='newJobButton' onClick={this.toggleModal.bind(this)}> New Job </button>
-                <button className='updateJobsButton' onClick={this.updateJobs.bind(this)}> Update Jobs </button>
-            </div>);
+            <div className='buttons-wrapper'>
+                <div className='buttons'>
+                    <button className='new-job-button button' onClick={this.toggleModal.bind(this)}> New Job </button>
+                    <button className='refresh-button button' onClick={this.updateJobs.bind(this)}> Update Jobs </button>
+                </div>
+            </div>
+        );
     }
 }
 
