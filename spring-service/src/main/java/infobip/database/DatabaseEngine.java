@@ -67,8 +67,8 @@ public class DatabaseEngine {
 	}
 	
 	public void createJob(JobModel job) {
-		String query = "INSERT INTO jobs VALUES ('" + job.message + "','" + job.channel + "','" + job.status + "'" + job.timestamp + "','" + job.timestamp + "')";
-		
+		String query = "INSERT INTO jobs VALUES ('" + job.message + "','" + job.channel + "','" + job.status + "','" + job.timestamp + "')";
+		System.out.println("Creating new job: " + query);
 		try {
 			this.conn.prepareStatement(query).execute();
 		} catch (SQLException e) {

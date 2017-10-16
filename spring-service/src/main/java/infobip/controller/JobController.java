@@ -9,6 +9,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,8 +35,9 @@ public class JobController {
     
 	@CrossOrigin(origins = "null")
     @RequestMapping(value = "/job", method = RequestMethod.POST)
-    public CreateJobResponse createJob(@RequestParam() CreateJobRequest request) {
-    	return new CreateJobResponse(200, false, true, "No service found.");
+    public CreateJobResponse createJob(@RequestBody() CreateJobRequest request) {
+		return this.jobService.createJob(request);
+    	// return new CreateJobResponse(200, false, true, "No service found.");
     }
     
 //	@CrossOrigin(origins = "null")
