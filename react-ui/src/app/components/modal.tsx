@@ -100,10 +100,6 @@ class Modal extends React.Component<ModalProps, ModalState> {
         this.setState({ channel: event.target.value });
     }
 
-    public timestampChange(event: any): void {
-        this.setState({ timestamp: event.target.value });
-    }
-
     public messageChange(event: any): void {
         this.setState({ message: event.target.value });
     }
