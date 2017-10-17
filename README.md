@@ -3,6 +3,12 @@
 ### A test project with react and spring-boot
 <hr/>
 
+## Requirenments
+- node
+- npm
+- jdk 8
+- gradle
+
 ## Frontend
 - react
 - react-redux
